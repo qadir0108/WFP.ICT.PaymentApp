@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="#0099cc"
+    tools:context="org.wfp.offlinepayment.activities.MainActivity"
+    android:theme="@style/AppTheme"
     >
 
     <FrameLayout
@@ -60,6 +62,7 @@
         android:gravity="center">
 
         <Button
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/btnPay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,6 +72,7 @@
             android:visibility="visible" />
 
         <Button
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/btnSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,6 +82,7 @@
             android:visibility="visible" />
 
         <Button
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/btnLogoff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

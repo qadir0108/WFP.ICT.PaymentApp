@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +29,7 @@ import org.wfp.offlinepayment.exceptions.NetworkStatePermissionException;
 import org.wfp.offlinepayment.exceptions.NotConnectedException;
 import org.wfp.offlinepayment.exceptions.UrlConnectionException;
 import org.wfp.offlinepayment.iterfaces.ProgressUpdateListener;
+import org.wfp.offlinepayment.model.BaseModel;
 import org.wfp.offlinepayment.model.BeneficiaryModel;
 import org.wfp.offlinepayment.model.ProgressUpdateModel;
 import org.wfp.offlinepayment.utils.CommonUtilities;
@@ -36,7 +39,7 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ProgressUpdateListener {
 
     LinearLayout layoutProgress;
@@ -119,6 +122,36 @@ public class MainActivity extends Activity
                 new FetchAndStoreBeneficiaries().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
                 break;
             case R.id.btnLogoff:
+
+                new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Are you sure to logout?")
+                        .setContentText("Your session information will be cleared.")
+                        .setConfirmText("Yes,Logout")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                ProviderUtility.LoginProvider.LogOff();
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run()
+                                    {
+                                        MainActivity.this.finish();
+                                    }
+                                }, 2000);
+
+                            }
+                        })
+                        .setCancelText("No, cancel!")
+                        .showCancelButton(true)
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .show();
 
                 break;
 

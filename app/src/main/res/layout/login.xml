@@ -7,14 +7,14 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".activities.Login" >
+    tools:context=".activities.Login"
+    android:background="#EEEEEE">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:orientation="vertical"
-         >
+        android:layout_marginTop="50dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/spinnerText"
@@ -67,7 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Login" 
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"
+            style="@style/Widget.AppCompat.Button.Colored"
+            />
 
     </FrameLayout>
     
@@ -85,8 +87,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="abc"
-            android:typeface="serif"
-            android:textSize="40sp" />
+            android:textSize="30sp"
+            android:typeface="serif" />
     </FrameLayout>
 
 </LinearLayout>
