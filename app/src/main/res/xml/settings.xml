@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- TF, MCL, RAPID  -->
+    <EditTextPreference android:title="Company code" android:summary="Enter company code" android:key="company_code" android:defaultValue="WFP" />
+    
+    <!-- Transfocus Pty Ltd , Mc Neill's Logistics , Rapid Haulage Pty Ltd -->
+    <EditTextPreference android:title="Company name" android:summary="Enter company name" android:key="company_name" android:defaultValue="World Food Programme" />
+    
+    <!-- server.transfocus.com.au , mail.mcneilllogistics.com.au , 10.0.2.2 -->
+    <EditTextPreference android:title="WebService" android:summary="Enter webservice hostname" android:key="hostname" android:defaultValue="http://10.0.2.2"/>
+    <EditTextPreference android:title="Port" android:summary="Enter webservice port" android:key="port" android:defaultValue="8050"/>
+    
+    <EditTextPreference android:title="GPS frequency" android:summary="Set GPS frequency in seconds." android:key="gps_frequency"/>
+   
+    <!-- 
+	<PreferenceCategory android:title="GCM Settings">
+	       <Preference android:title="Register with GCM Server" android:key="btnRegisterGCMServer"/>
+	       <Preference android:title="Register with POD Server" android:key="btnRegisterPODServer"/> 
+	                 
+	</PreferenceCategory>  
+    -->
+</PreferenceScreen>
