@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/OfflinePayment.iml" filepath="$PROJECT_DIR$/OfflinePayment.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WFP.ICT.PaymentApp.iml" filepath="$PROJECT_DIR$/WFP.ICT.PaymentApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>
