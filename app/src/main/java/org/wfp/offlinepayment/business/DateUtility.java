@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 public class DateUtility {
 
     static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static final SimpleDateFormat formatToSend = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public static Date toDateTime(String dateTime) {
 
@@ -27,5 +28,9 @@ public class DateUtility {
 
     public static String formatDateTime(Date dateTime) {
         return format.format(dateTime);
+    }
+
+    public static String formatDateTimeToSend(Date dateTime) {
+        return formatToSend.format(dateTime);
     }
 }

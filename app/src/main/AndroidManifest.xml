@@ -32,19 +32,21 @@
     <permission android:name="com.androidpodui.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
     <uses-permission android:name="com.androidpodui.permission.C2D_MESSAGE"/>
 
+    <!--android:theme="@android:style/Theme.Material.Light.DarkActionBar"-->
     <application  xmlns:tools="http://schemas.android.com/tools"
         android:allowBackup="true"
         android:icon="@mipmap/wfp_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.Light.DarkActionBar"
         tools:replace="android:icon"
+        android:theme="@style/AppTheme"
         >
         <!--android:theme="@style/AppTheme" -->
         <activity
             android:name=".activities.Login"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +56,6 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
             >
         </activity>
         <activity
@@ -65,7 +66,6 @@
         <activity
             android:name=".activities.ScanActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
              />
     </application>
 

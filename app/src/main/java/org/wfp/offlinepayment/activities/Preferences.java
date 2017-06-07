@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import org.wfp.offlinepayment.R;
@@ -32,10 +33,10 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
 
 		addPreferencesFromResource(R.xml.settings);
 
-		ActionBar actionBar = this.getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(false);
+//		ActionBar actionBar = this.getActionBar();
+//		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//		actionBar.setDisplayHomeAsUpEnabled(true);
+//		actionBar.setDisplayShowTitleEnabled(false);
 
 //		registerReceiver(mHandleGCMMessageReceiver, new IntentFilter(ACTION_DISPLAY_GCM_MESSAGE));
 //		registerReceiver(mHandlePODMessageReceiver, new IntentFilter(ACTION_DISPLAY_POD_MESSAGE));

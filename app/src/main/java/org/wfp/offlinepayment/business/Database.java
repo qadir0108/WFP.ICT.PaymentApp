@@ -117,35 +117,38 @@ public class Database extends SQLiteOpenHelper {
 
 	public static synchronized int writeBeneficiaries(Context context, ArrayList<BeneficiaryModel> beneficiaryModels)
 	{
-		SQLiteDatabase wdb = GetSqliteHelper(context);
+
 		int imported = 0;
 		try
 		{
 
-			wdb.beginTransaction();
 			for (int i = 0; i < beneficiaryModels.size(); i++)
 			{
-				if (writeBeneficiary(wdb, beneficiaryModels.get(i)) != -1)
+                boolean alreadyExist = true;
+                BeneficiaryModel model = beneficiaryModels.get(i);
+                SQLiteDatabase wdb = GetSqliteHelper(context);
+                BeneficiaryModel already = getByPaymentId(context, model.getPaymentId());
+                wdb.close();
+
+                if(already == null)
+				if (writeBeneficiary(context, model) != -1)
 					imported++;
 
 			}
-			wdb.setTransactionSuccessful();
 		} catch (Exception ex)
 		{
 			imported = -1;
 		}
 		finally
 		{
-			wdb.endTransaction();
 		}
-
-		wdb.close();
 		return imported;
 
 	}
 
-	private static synchronized long writeBeneficiary(SQLiteDatabase wdb, BeneficiaryModel beneficiary)
+	private static synchronized long writeBeneficiary(Context context, BeneficiaryModel beneficiary)
 	{
+        SQLiteDatabase wdb = GetSqliteHelper(context);
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_ID, beneficiary.getId());
         cv.put(COLUMN_PAYMENT_ID, beneficiary.getPaymentId());
@@ -163,7 +166,9 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COLUMN_STATUS, beneficiary.getStatus());
 
 		cv.put(COLUMN_DATE_DOWNLOADED, DateUtility.formatDateTime(new java.util.Date()));
-		return wdb.insert(TABLE_BENEFICIARY, null, cv);
+		long result = wdb.insert(TABLE_BENEFICIARY, null, cv);
+        wdb.close();
+        return result;
 	}
 
 	public static synchronized ArrayList<BeneficiaryModel> getAll(Context context)

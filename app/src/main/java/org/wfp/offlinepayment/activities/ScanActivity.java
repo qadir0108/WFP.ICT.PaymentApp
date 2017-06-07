@@ -61,6 +61,7 @@ public class ScanActivity extends AppCompatActivity {
         });
 
         btnPay = (Button) findViewById(R.id.btnPay);
+        btnPay.setEnabled(false);
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +97,7 @@ public class ScanActivity extends AppCompatActivity {
                                         .setContentText("Beneficiary has been paid!")
                                         .setConfirmText("OK")
                                         .setConfirmClickListener(null)
+                                        .showCancelButton(false)
                                         .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                             }
                         })
@@ -132,7 +134,7 @@ public class ScanActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.mainmenu, menu);
         return true;
     }
 
@@ -144,48 +146,52 @@ public class ScanActivity extends AppCompatActivity {
         if (scanResult != null) {
 
             try {
-                String paymentId = "0526304465172411000"; //scanResult.getContents();
-                ProviderUtility.BeneficiaryProvider = new BeneficiaryProvider(ScanActivity.this);
-                //List<BeneficiaryModel> data = ProviderUtility.BeneficiaryProvider.getPayments();
-                model = ProviderUtility.BeneficiaryProvider.getPaymentById(paymentId);
-                if(model == null)
-                {
-                    // sweet Not Found
-                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Error!")
-                            .setContentText("Beneficiary NOT FOUND!")
-                            .show();
-                } else {
+                String paymentId = scanResult.getContents(); //"0526304465172411000";
 
-                    if(model.isPaid())
+                if(paymentId != null) {
+
+                    ProviderUtility.BeneficiaryProvider = new BeneficiaryProvider(ScanActivity.this);
+                    model = ProviderUtility.BeneficiaryProvider.getPaymentById(paymentId);
+                    if(model == null)
                     {
-                        // sweet ALREADY PAID
+                        // sweet Not Found
                         btnPay.setEnabled(false);
                         new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Error!")
-                                .setContentText("Beneficiary ALREADY PAID!")
+                                .setContentText("Beneficiary NOT FOUND!")
                                 .show();
-                    }
-                    else {
-                        // sweet FOUND -> PAY
-                        btnPay.setEnabled(true);
-                        new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("WFP Offline Payment!")
-                                .setContentText("Beneficiary FOUND!")
-                                .show();
+                    } else {
 
-                        ((TextView) findViewById(R.id.lblSchool)).setText(model.getSchool());
-                        ((TextView) findViewById(R.id.lblDistrict)).setText(model.getDistrict());
-                        ((TextView) findViewById(R.id.lblTehsil)).setText(model.getTehsil());
-                        ((TextView) findViewById(R.id.lblUC)).setText(model.getUc());
-                        ((TextView) findViewById(R.id.lblVillage)).setText(model.getVillage());
-                        ((TextView) findViewById(R.id.lblAddress)).setText(model.getAddress());
+                        if(model.isPaid())
+                        {
+                            // sweet ALREADY PAID
+                            btnPay.setEnabled(false);
+                            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Error!")
+                                    .setContentText("Beneficiary ALREADY PAID!")
+                                    .show();
+                        }
+                        else {
+                            // sweet FOUND -> PAY
+                            btnPay.setEnabled(true);
+                            new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("WFP Offline Payment!")
+                                    .setContentText("Beneficiary FOUND!")
+                                    .show();
 
-                        ((TextView) findViewById(R.id.lblBeneficiaryName)).setText(model.getBeneficiaryName());
-                        ((TextView) findViewById(R.id.lblBeneficiaryCNIC)).setText(model.getBeneficiaryCNIC());
-                        ((TextView) findViewById(R.id.lblFatherName)).setText(model.getFatherName());
-                        ((TextView) findViewById(R.id.lblPaymentCycle)).setText(model.getPaymentCycle());
-                        ((TextView) findViewById(R.id.lblAmount)).setText(model.getAmount() + "");
+                            ((TextView) findViewById(R.id.lblSchool)).setText(model.getSchool());
+                            ((TextView) findViewById(R.id.lblDistrict)).setText(model.getDistrict());
+                            ((TextView) findViewById(R.id.lblTehsil)).setText(model.getTehsil());
+                            ((TextView) findViewById(R.id.lblUC)).setText(model.getUc());
+                            ((TextView) findViewById(R.id.lblVillage)).setText(model.getVillage());
+                            ((TextView) findViewById(R.id.lblAddress)).setText(model.getAddress());
+
+                            ((TextView) findViewById(R.id.lblBeneficiaryName)).setText(model.getBeneficiaryName());
+                            ((TextView) findViewById(R.id.lblBeneficiaryCNIC)).setText(model.getBeneficiaryCNIC());
+                            ((TextView) findViewById(R.id.lblFatherName)).setText(model.getFatherName());
+                            ((TextView) findViewById(R.id.lblPaymentCycle)).setText(model.getPaymentCycle());
+                            ((TextView) findViewById(R.id.lblAmount)).setText(model.getAmount() + "");
+                        }
                     }
                 }
 

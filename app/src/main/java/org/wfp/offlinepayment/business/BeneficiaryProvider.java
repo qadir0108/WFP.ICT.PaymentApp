@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -20,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
+import org.wfp.offlinepayment.enums.BeneficiaryUpdateEnum;
 import org.wfp.offlinepayment.exceptions.DatabaseInsertException;
 import org.wfp.offlinepayment.exceptions.DatabaseUpdateException;
 import org.wfp.offlinepayment.exceptions.JSONNullableException;
@@ -28,6 +30,7 @@ import org.wfp.offlinepayment.exceptions.NotConnectedException;
 import org.wfp.offlinepayment.exceptions.UrlConnectionException;
 import org.wfp.offlinepayment.model.BaseModel;
 import org.wfp.offlinepayment.model.BeneficiaryModel;
+import org.wfp.offlinepayment.model.BeneficiaryUpdateModel;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -164,27 +167,40 @@ public class BeneficiaryProvider extends BaseProvider {
 		IsConnected();
 
 		List<BeneficiaryModel> data = ProviderUtility.BeneficiaryProvider.getPayments();
-		List<String> notSynced = new ArrayList<String>();
+		List<BeneficiaryUpdateModel> notSynced = new ArrayList<BeneficiaryUpdateModel>();
 		for (BeneficiaryModel model : data) {
 			if(model.isPaid() && !model.isSynced())
-			notSynced.add(model.getPaymentId());
+            {
+                BeneficiaryUpdateModel update = new BeneficiaryUpdateModel();
+                update.setPaymentId(model.getPaymentId());
+                update.setDatePaid(DateUtility.formatDateTimeToSend(model.getDatePaid()));
+                //update.setDatePaid(DateUtility.formatDateTimeToSend(new Date()));
+                notSynced.add(update);
+            }
 		}
 		if(notSynced.size() == 0) throw new IOException("All synced");
 
-		JSONArray jsArray = new JSONArray(notSynced);
+		JSONArray jsArray = new JSONArray();
+        for (BeneficiaryUpdateModel model : notSynced) {
+            jsArray.put(model.getJSONObject());
+        }
+
+//        JSONStringer object = new JSONStringer()
+//                .object()
+//                .key(BeneficiaryUpdateEnum.PaymentId.Value).value(model.getPaymentId())
+//                .key(BeneficiaryUpdateEnum.DatePaid.Value).value(model.getDatePaid())
+//                .endObject();
+//        JSONStringer object = new JSONStringer()
+//                .object()
+//                .key(BeneficiaryUpdateEnum.Data.Value).value(jsArray)
+//                .endObject();
 
 		String url = BaseModel.GetUpdatePaymentsUrl(context);
 		url = url.replace("authtokenvalue", ProviderUtility.LoginProvider.LoginModel.getAuthToken());
 		HttpPost postRequest = new HttpPost(url);
 		postRequest.setHeader("Content-Type", "application/json");
-		JSONStringer completedJson = new JSONStringer();
-		String authToken = ProviderUtility.LoginProvider.LoginModel.getAuthToken();
-		completedJson.object();
-		//completedJson.key(BaseModel.JsonMessageEnum.AuthToken.Value).value(authToken);
-		completedJson.key(BaseModel.JsonMessageEnum.Data.Value).value(jsArray);
-		completedJson.endObject();
 
-		StringEntity loginEntity = new StringEntity(completedJson.toString());
+		StringEntity loginEntity = new StringEntity(jsArray.toString());
 		postRequest.setEntity(loginEntity);
 
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -211,8 +227,8 @@ public class BeneficiaryProvider extends BaseProvider {
 				return false;
 			} else
 			{
-				for (String paymentId: notSynced) {
-					Database.setPaymentSynced(context, paymentId);
+				for (BeneficiaryUpdateModel payment: notSynced) {
+					Database.setPaymentSynced(context, payment.getPaymentId());
 				}
 
 			}
