@@ -28,11 +28,11 @@
                     android:id="@+id/spinnerText1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="School Name"
+                    android:text="School"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
-                    android:id="@+id/lblSchool"
+                    android:id="@+id/lblSchoolName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -40,6 +40,28 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp" >
+
+                <TextView
+                    android:id="@+id/textView31"
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:text="School Code"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/lblSchoolId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,7 +71,7 @@
                     android:id="@+id/textView3"
                     android:layout_width="114dp"
                     android:layout_height="wrap_content"
-                    android:text="District"
+                    android:text="Agency"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -80,6 +102,30 @@
                     android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp" >
+
+                <TextView
+                    android:id="@+id/spinnerText111"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Student"
+                    android:layout_marginTop="5px"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/lblStudentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,31 +135,11 @@
                     android:id="@+id/gdf"
                     android:layout_width="114dp"
                     android:layout_height="wrap_content"
-                    android:text="Union Council"
+                    android:text="Student Code"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
-                    android:id="@+id/lblUC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_weight="1"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp" >
-
-                <TextView
-                    android:id="@+id/sds"
-                    android:layout_width="114dp"
-                    android:layout_height="wrap_content"
-                    android:text="Village"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/lblVillage"
+                    android:id="@+id/lblStudentId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -129,11 +155,31 @@
                     android:id="@+id/sdas"
                     android:layout_width="114dp"
                     android:layout_height="wrap_content"
-                    android:text="Address"
+                    android:text="Class"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
-                    android:id="@+id/lblAddress"
+                    android:id="@+id/lblStudentClass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp" >
+
+                <TextView
+                    android:id="@+id/sds"
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:text="Date of Birth"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/lblStudentDoB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -144,14 +190,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp" >
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5px" >
 
                 <TextView
                     android:id="@+id/spinnerText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Beneficiary Name"
+                    android:text="Parent Name"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
@@ -183,32 +229,12 @@
                     android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp" >
-
-                <TextView
-                    android:id="@+id/TextView02"
-                    android:layout_width="115dp"
-                    android:layout_height="wrap_content"
-                    android:text="Father Name"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/lblFatherName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_weight="1"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp">
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp">
 
                 <TextView
                     android:id="@+id/spinnerText11"

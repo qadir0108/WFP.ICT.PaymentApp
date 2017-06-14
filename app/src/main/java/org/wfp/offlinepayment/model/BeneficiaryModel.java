@@ -1,9 +1,5 @@
 package org.wfp.offlinepayment.model;
 
-import android.text.method.DateTimeKeyListener;
-
-import org.wfp.offlinepayment.business.ProviderUtility;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,19 +10,22 @@ public class BeneficiaryModel extends BaseModel implements Serializable {
 	private String PaymentCycle;
 	private String District;
 	private String Tehsil;
-	private String Uc;
-	private String Village;
-	private String Address;
-	private String School;
+	private String SchoolId;
+	private String SchoolName;
+	private String StudentId;
+	private String StudentName;
+	private String DateOfBirth;
+	private String StudentClass;
 	private String BeneficiaryCNIC;
 	private String BeneficiaryName;
-	private String FatherName;
 	private int Amount;
 	private int Status;
 
 	private Date DateDownloaded;
 	private boolean Paid;
 	private Date DatePaid;
+	private String LatPaid;
+	private String LngPaid;
 
 	private boolean Synced;
 	private Date DateSynced;
@@ -63,36 +62,28 @@ public class BeneficiaryModel extends BaseModel implements Serializable {
 		Tehsil = tehsil;
 	}
 
-	public String getUc() {
-		return Uc;
+	public String getSchoolId() {
+		return SchoolId;
 	}
 
-	public void setUc(String uc) {
-		Uc = uc;
+	public void setSchoolId(String schoolId) {
+		SchoolId = schoolId;
 	}
 
-	public String getVillage() {
-		return Village;
+	public String getSchoolName() {
+		return SchoolName;
 	}
 
-	public void setVillage(String village) {
-		Village = village;
+	public void setSchoolName(String schoolName) {
+		SchoolName = schoolName;
 	}
 
-	public String getAddress() {
-		return Address;
+	public String getStudentId() {
+		return StudentId;
 	}
 
-	public void setAddress(String address) {
-		Address = address;
-	}
-
-	public String getSchool() {
-		return School;
-	}
-
-	public void setSchool(String school) {
-		School = school;
+	public void setStudentId(String studentId) {
+		StudentId = studentId;
 	}
 
 	public String getBeneficiaryCNIC() {
@@ -109,14 +100,6 @@ public class BeneficiaryModel extends BaseModel implements Serializable {
 
 	public void setBeneficiaryName(String beneficiaryName) {
 		BeneficiaryName = beneficiaryName;
-	}
-
-	public String getFatherName() {
-		return FatherName;
-	}
-
-	public void setFatherName(String fatherName) {
-		FatherName = fatherName;
 	}
 
 	public int getAmount() {
@@ -182,4 +165,44 @@ public class BeneficiaryModel extends BaseModel implements Serializable {
 	public void setDateSynced(Date dateSynced) {
 		DateSynced = dateSynced;
 	}
+
+    public String getLatPaid() {
+        return LatPaid;
+    }
+
+    public void setLatPaid(String latPaid) {
+        LatPaid = latPaid;
+    }
+
+    public String getLngPaid() {
+        return LngPaid;
+    }
+
+    public void setLngPaid(String lngPaid) {
+        LngPaid = lngPaid;
+    }
+
+    public String getStudentName() {
+        return StudentName;
+    }
+
+    public void setStudentName(String studentName) {
+        StudentName = studentName;
+    }
+
+    public String getDateOfBirth() {
+        return DateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        DateOfBirth = dateOfBirth;
+    }
+
+    public String getStudentClass() {
+        return StudentClass;
+    }
+
+    public void setStudentClass(String studentClass) {
+        StudentClass = studentClass;
+    }
 }

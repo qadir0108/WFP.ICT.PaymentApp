@@ -1,6 +1,8 @@
 package org.wfp.offlinepayment.activities;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -16,8 +18,10 @@ import org.wfp.offlinepayment.exceptions.NetworkStatePermissionException;
 import org.wfp.offlinepayment.exceptions.NotConnectedException;
 import org.wfp.offlinepayment.exceptions.UrlConnectionException;
 import org.wfp.offlinepayment.model.LoginModel;
+import org.wfp.offlinepayment.services.GPSTracker;
 import org.wfp.offlinepayment.utils.ErrorLogUtility;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,9 +30,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,6 +48,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.fabric.sdk.android.Fabric;
 
 public class Login extends AppCompatActivity implements OnClickListener, OnEditorActionListener {
 
@@ -60,16 +72,17 @@ public class Login extends AppCompatActivity implements OnClickListener, OnEdito
             super.onCreate(savedInstanceState);
             setContentView(R.layout.login);
 
-            //BugSenseHandler.initAndStartSession(this, "ffe3e7ce");
-            //BugSenseHandler.flush(this);
+            Fabric.with(this, new Crashlytics());
             Log.d("LOGIN_ACTIVITY", "ON_CREATE METHOD");
+
+            checkAndRequestPermissions();
 
             ErrorLogUtility errorUtility = ErrorLogUtility.getInstance();
             errorUtility.Init(getApplicationContext());
             errorUtility.CheckCrashErrorAndSendLog(getApplicationContext());
 
-            //		int a = 0;
-            //		a = 1/0;
+//        int a = 0;
+//        a = 1/0;
 
 //		ActionBar actionBar = this.getActionBar();
 //		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -108,7 +121,58 @@ public class Login extends AppCompatActivity implements OnClickListener, OnEdito
 
         }
 
-        @Override
+
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 2;
+    private  void checkAndRequestPermissions() {
+        int permissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int permissionLocation1 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int permissionLocation2 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (permissionLocation1 != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        if (permissionLocation2 != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
+                boolean isGranted = true;
+                for (int grantResult:grantResults) {
+                    if (grantResult == PackageManager.PERMISSION_DENIED) {
+                        isGranted = false;
+                    }
+                }
+                if (isGranted) {
+                    LoginButton.setEnabled(true);
+                } else {
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("WFP Offline Payment!")
+                            .setContentText("Permissions are required to run the application!")
+                            .show();
+                    LoginButton.setEnabled(false);
+                }
+                return;
+            }
+
+            // other 'switch' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+
+    @Override
         public void onClick(View v)
         {
             switch (v.getId())

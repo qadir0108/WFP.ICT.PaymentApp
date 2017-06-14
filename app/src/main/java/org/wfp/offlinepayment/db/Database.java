@@ -1,7 +1,10 @@
-package org.wfp.offlinepayment.business;
+package org.wfp.offlinepayment.db;
 
 import java.util.ArrayList;
 
+import org.wfp.offlinepayment.business.DateUtility;
+import org.wfp.offlinepayment.business.ProviderUtility;
+import org.wfp.offlinepayment.enums.BeneficiaryEnum;
 import org.wfp.offlinepayment.exceptions.AuthTokenExpiredException;
 import org.wfp.offlinepayment.exceptions.DatabaseUpdateException;
 import org.wfp.offlinepayment.exceptions.EmptyAuthTokenException;
@@ -23,26 +26,6 @@ public class Database extends SQLiteOpenHelper {
 
 	private static final String TABLE_LOGINDATA = "LOGINDATA";
 	private static final String TABLE_BENEFICIARY = "BENEFICIARY";
-
-	public static final String COLUMN_ID = "Id";
-    public static final String COLUMN_PAYMENT_ID = "PaymentId";
-    public static final String COLUMN_PAYMENT_CYCLE = "PaymentCycle";
-    public static final String COLUMN_DISTRICT = "District";
-    public static final String COLUMN_TEHSIL = "Tehsil";
-    public static final String COLUMN_UC = "UC";
-    public static final String COLUMN_VILLAGE = "Village";
-    public static final String COLUMN_ADDRESS = "Address";
-    public static final String COLUMN_SCHOOL = "School";
-    public static final String COLUMN_BENEFICIARY_CNIC = "BeneficiaryCNIC";
-    public static final String COLUMN_BENEFICIARY_NAME = "BeneficiaryName";
-    public static final String COLUMN_FATHER_NAME = "FatherName";
-    public static final String COLUMN_AMONUT = "Amount";
-    public static final String COLUMN_STATUS = "Status";
-    public static final String COLUMN_DATE_DOWNLOADED = "DateDownloaded";
-	public static final String COLUMN_IS_PAID = "IsPaid";
-	public static final String COLUMN_DATE_PAID = "DatePaid";
-    public static final String COLUMN_IS_SYNCED = "IsSynced";
-    public static final String COLUMN_DATE_SYNCED = "DateSynced";
 
 	private static final String COLUMN_LOGINDATA_AUTHTOKEN = "AuthToken";
 	private static final String COLUMN_LOGINDATA_AUTHTOKEN_EXPIRY = "AuthTokenExpiry";
@@ -81,26 +64,29 @@ public class Database extends SQLiteOpenHelper {
 				COLUMN_LOGINDATA_ACTIVE + " integer," +
 				COLUMN_LOGINDATA_USERID + " integer);";
 
-		String sql = "create table " + TABLE_BENEFICIARY + "(" +
-				COLUMN_ID + " text primary key," +
-                COLUMN_PAYMENT_ID + " text ," +
-                COLUMN_PAYMENT_CYCLE + " text ," +
-				COLUMN_DISTRICT + " text," +
-				COLUMN_TEHSIL + " text," +
-				COLUMN_UC + " text," +
-				COLUMN_VILLAGE + " text," +
-				COLUMN_ADDRESS + " text," +
-				COLUMN_SCHOOL + " text," +
-				COLUMN_BENEFICIARY_CNIC + " text," +
-				COLUMN_BENEFICIARY_NAME + " text," +
-				COLUMN_FATHER_NAME + " text," +
-				COLUMN_AMONUT + " integer," +
-				COLUMN_STATUS + " integer," +
-				COLUMN_DATE_DOWNLOADED + " text," +
-				COLUMN_IS_PAID + " integer," +
-				COLUMN_DATE_PAID + " text," +
-				COLUMN_IS_SYNCED + " integer," +
-				COLUMN_DATE_SYNCED + " text);";
+        String sql = "create table " + TABLE_BENEFICIARY + "(" +
+                BeneficiaryEnum.Id.Value + " text primary key," +
+                BeneficiaryEnum.PaymentId.Value + " text ," +
+                BeneficiaryEnum.PaymentCycle.Value + " text ," +
+                BeneficiaryEnum.District.Value + " text," +
+                BeneficiaryEnum.Tehsil.Value + " text," +
+                BeneficiaryEnum.SchoolId.Value + " text," +
+                BeneficiaryEnum.SchoolName.Value + " text," +
+                BeneficiaryEnum.StudentId.Value + " text," +
+                BeneficiaryEnum.StudentName.Value + " text," +
+                BeneficiaryEnum.DateOfBirth.Value + " text," +
+                BeneficiaryEnum.StudentClass.Value + " text," +
+                BeneficiaryEnum.BeneficiaryCNIC.Value + " text," +
+                BeneficiaryEnum.BeneficiaryName.Value + " text," +
+                BeneficiaryEnum.Amount.Value + " integer," +
+                BeneficiaryEnum.Status.Value + " integer," +
+                BeneficiaryEnum.DateDownloaded.Value + " text," +
+                BeneficiaryEnum.IsPaid.Value + " integer," +
+                BeneficiaryEnum.DatePaid.Value + " text," +
+                BeneficiaryEnum.LatPaid.Value + " text," +
+                BeneficiaryEnum.LngPaid.Value + " text," +
+                BeneficiaryEnum.IsSynced.Value + " integer," +
+                BeneficiaryEnum.DateSynced.Value + " text);";
 
 		db.execSQL(sqllogin);
 		db.execSQL(sql);
@@ -126,9 +112,7 @@ public class Database extends SQLiteOpenHelper {
 			{
                 boolean alreadyExist = true;
                 BeneficiaryModel model = beneficiaryModels.get(i);
-                SQLiteDatabase wdb = GetSqliteHelper(context);
                 BeneficiaryModel already = getByPaymentId(context, model.getPaymentId());
-                wdb.close();
 
                 if(already == null)
 				if (writeBeneficiary(context, model) != -1)
@@ -150,22 +134,22 @@ public class Database extends SQLiteOpenHelper {
 	{
         SQLiteDatabase wdb = GetSqliteHelper(context);
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_ID, beneficiary.getId());
-        cv.put(COLUMN_PAYMENT_ID, beneficiary.getPaymentId());
-		cv.put(COLUMN_PAYMENT_CYCLE, beneficiary.getPaymentCycle());
-		cv.put(COLUMN_DISTRICT, beneficiary.getDistrict());
-		cv.put(COLUMN_TEHSIL, beneficiary.getTehsil());
-		cv.put(COLUMN_UC, beneficiary.getUc());
-		cv.put(COLUMN_VILLAGE, beneficiary.getVillage());
-        cv.put(COLUMN_ADDRESS, beneficiary.getAddress());
-        cv.put(COLUMN_SCHOOL, beneficiary.getSchool());
-        cv.put(COLUMN_BENEFICIARY_CNIC, beneficiary.getSchool());
-        cv.put(COLUMN_BENEFICIARY_NAME, beneficiary.getBeneficiaryName());
-        cv.put(COLUMN_FATHER_NAME, beneficiary.getFatherName());
-        cv.put(COLUMN_AMONUT, beneficiary.getAmount());
-        cv.put(COLUMN_STATUS, beneficiary.getStatus());
-
-		cv.put(COLUMN_DATE_DOWNLOADED, DateUtility.formatDateTime(new java.util.Date()));
+		cv.put(BeneficiaryEnum.Id.Value, beneficiary.getId());
+        cv.put(BeneficiaryEnum.PaymentId.Value, beneficiary.getPaymentId());
+		cv.put(BeneficiaryEnum.PaymentCycle.Value, beneficiary.getPaymentCycle());
+		cv.put(BeneficiaryEnum.District.Value, beneficiary.getDistrict());
+		cv.put(BeneficiaryEnum.Tehsil.Value, beneficiary.getTehsil());
+		cv.put(BeneficiaryEnum.SchoolId.Value, beneficiary.getSchoolId());
+		cv.put(BeneficiaryEnum.SchoolName.Value, beneficiary.getSchoolName());
+        cv.put(BeneficiaryEnum.StudentId.Value, beneficiary.getStudentId());
+        cv.put(BeneficiaryEnum.StudentName.Value, beneficiary.getStudentName());
+        cv.put(BeneficiaryEnum.DateOfBirth.Value, beneficiary.getDateOfBirth());
+        cv.put(BeneficiaryEnum.StudentClass.Value, beneficiary.getStudentClass());
+        cv.put(BeneficiaryEnum.BeneficiaryCNIC.Value, beneficiary.getBeneficiaryCNIC());
+        cv.put(BeneficiaryEnum.BeneficiaryName.Value, beneficiary.getBeneficiaryName());
+        cv.put(BeneficiaryEnum.Amount.Value, beneficiary.getAmount());
+        cv.put(BeneficiaryEnum.Status.Value, beneficiary.getStatus());
+		cv.put(BeneficiaryEnum.DateDownloaded.Value, DateUtility.formatDateTime(new java.util.Date()));
 		long result = wdb.insert(TABLE_BENEFICIARY, null, cv);
         wdb.close();
         return result;
@@ -175,12 +159,18 @@ public class Database extends SQLiteOpenHelper {
 	{
 		SQLiteDatabase rdb = GetSqliteHelper(context);
 		ArrayList<BeneficiaryModel> listmodel = new ArrayList<BeneficiaryModel>();
-        String cols[] = new String[] { COLUMN_ID, COLUMN_PAYMENT_ID, COLUMN_PAYMENT_CYCLE, COLUMN_DISTRICT,COLUMN_TEHSIL,COLUMN_UC, COLUMN_VILLAGE, COLUMN_ADDRESS, COLUMN_SCHOOL,
-                COLUMN_BENEFICIARY_CNIC,COLUMN_BENEFICIARY_NAME, COLUMN_FATHER_NAME, COLUMN_AMONUT, COLUMN_STATUS , COLUMN_DATE_DOWNLOADED, COLUMN_IS_PAID, COLUMN_DATE_PAID, COLUMN_IS_SYNCED, COLUMN_DATE_SYNCED };
+        String cols[] = new String[] { BeneficiaryEnum.Id.Value,
+                BeneficiaryEnum.PaymentId.Value,BeneficiaryEnum.PaymentCycle.Value,BeneficiaryEnum.District.Value,
+                BeneficiaryEnum.Tehsil.Value, BeneficiaryEnum.SchoolId.Value,BeneficiaryEnum.SchoolName.Value,
+                BeneficiaryEnum.StudentId.Value,BeneficiaryEnum.StudentName.Value,BeneficiaryEnum.DateOfBirth.Value,
+                BeneficiaryEnum.StudentClass.Value,BeneficiaryEnum.BeneficiaryCNIC.Value,BeneficiaryEnum.BeneficiaryName.Value,
+                BeneficiaryEnum.Amount.Value,BeneficiaryEnum.Status.Value,BeneficiaryEnum.DateDownloaded.Value,
+                BeneficiaryEnum.IsPaid.Value,BeneficiaryEnum.DatePaid.Value,BeneficiaryEnum.LatPaid.Value,
+                BeneficiaryEnum.LngPaid.Value,BeneficiaryEnum.IsSynced.Value,BeneficiaryEnum.DateSynced.Value };
 
         Cursor results = null;
 
-		results = rdb.query(TABLE_BENEFICIARY, cols, null, null, null, null, COLUMN_PAYMENT_ID + " ASC");
+		results = rdb.query(TABLE_BENEFICIARY, cols, null, null, null, null, BeneficiaryEnum.PaymentId.Value + " ASC");
 
 		while (results.moveToNext())
 		{
@@ -197,10 +187,16 @@ public class Database extends SQLiteOpenHelper {
 	{
 		SQLiteDatabase rdb = GetSqliteHelper(context);
         BeneficiaryModel model = null;
-		String cols[] = new String[] { COLUMN_ID, COLUMN_PAYMENT_ID, COLUMN_PAYMENT_CYCLE, COLUMN_DISTRICT,COLUMN_TEHSIL,COLUMN_UC, COLUMN_VILLAGE, COLUMN_ADDRESS, COLUMN_SCHOOL,
-				COLUMN_BENEFICIARY_CNIC,COLUMN_BENEFICIARY_NAME, COLUMN_FATHER_NAME, COLUMN_AMONUT, COLUMN_STATUS , COLUMN_DATE_DOWNLOADED, COLUMN_IS_PAID, COLUMN_DATE_PAID, COLUMN_IS_SYNCED, COLUMN_DATE_SYNCED };
+        String cols[] = new String[] { BeneficiaryEnum.Id.Value,
+                BeneficiaryEnum.PaymentId.Value,BeneficiaryEnum.PaymentCycle.Value,BeneficiaryEnum.District.Value,
+                BeneficiaryEnum.Tehsil.Value, BeneficiaryEnum.SchoolId.Value,BeneficiaryEnum.SchoolName.Value,
+                BeneficiaryEnum.StudentId.Value,BeneficiaryEnum.StudentName.Value,BeneficiaryEnum.DateOfBirth.Value,
+                BeneficiaryEnum.StudentClass.Value,BeneficiaryEnum.BeneficiaryCNIC.Value,BeneficiaryEnum.BeneficiaryName.Value,
+                BeneficiaryEnum.Amount.Value,BeneficiaryEnum.Status.Value,BeneficiaryEnum.DateDownloaded.Value,
+                BeneficiaryEnum.IsPaid.Value,BeneficiaryEnum.DatePaid.Value,BeneficiaryEnum.LatPaid.Value,
+                BeneficiaryEnum.LngPaid.Value,BeneficiaryEnum.IsSynced.Value,BeneficiaryEnum.DateSynced.Value };
 
-		Cursor results = rdb.query(TABLE_BENEFICIARY, cols, COLUMN_PAYMENT_ID + " = ?", new String[] { PaymentId }, null, null, null);
+		Cursor results = rdb.query(TABLE_BENEFICIARY, cols, BeneficiaryEnum.PaymentId.Value + " = ?", new String[] { PaymentId }, null, null, null);
 
 		if (results.moveToFirst())
 		{
@@ -216,10 +212,16 @@ public class Database extends SQLiteOpenHelper {
 	{
 		SQLiteDatabase rdb = GetSqliteHelper(context);
 		ArrayList<BeneficiaryModel> listmodel = new ArrayList<BeneficiaryModel>();
-		String cols[] = new String[] { COLUMN_ID, COLUMN_PAYMENT_ID, COLUMN_PAYMENT_CYCLE, COLUMN_DISTRICT,COLUMN_TEHSIL,COLUMN_UC, COLUMN_VILLAGE, COLUMN_ADDRESS, COLUMN_SCHOOL,
-				COLUMN_BENEFICIARY_CNIC,COLUMN_BENEFICIARY_NAME, COLUMN_FATHER_NAME, COLUMN_AMONUT, COLUMN_STATUS , COLUMN_DATE_DOWNLOADED, COLUMN_IS_PAID, COLUMN_DATE_PAID, COLUMN_IS_SYNCED, COLUMN_DATE_SYNCED };
+        String cols[] = new String[] { BeneficiaryEnum.Id.Value,
+                BeneficiaryEnum.PaymentId.Value,BeneficiaryEnum.PaymentCycle.Value,BeneficiaryEnum.District.Value,
+                BeneficiaryEnum.Tehsil.Value, BeneficiaryEnum.SchoolId.Value,BeneficiaryEnum.SchoolName.Value,
+                BeneficiaryEnum.StudentId.Value,BeneficiaryEnum.StudentName.Value,BeneficiaryEnum.DateOfBirth.Value,
+                BeneficiaryEnum.StudentClass.Value,BeneficiaryEnum.BeneficiaryCNIC.Value,BeneficiaryEnum.BeneficiaryName.Value,
+                BeneficiaryEnum.Amount.Value,BeneficiaryEnum.Status.Value,BeneficiaryEnum.DateDownloaded.Value,
+                BeneficiaryEnum.IsPaid.Value,BeneficiaryEnum.DatePaid.Value,BeneficiaryEnum.LatPaid.Value,
+                BeneficiaryEnum.LngPaid.Value,BeneficiaryEnum.IsSynced.Value,BeneficiaryEnum.DateSynced.Value };
 
-		Cursor results = rdb.query(TABLE_BENEFICIARY, cols, COLUMN_IS_SYNCED + " = ? AND " + COLUMN_IS_PAID + " = ? ", new String[] { "0", "1" }, null, null, null);
+        Cursor results = rdb.query(TABLE_BENEFICIARY, cols, BeneficiaryEnum.IsSynced.Value + " = ? AND " + BeneficiaryEnum.IsPaid.Value + " = ? ", new String[] { "0", "1" }, null, null, null);
 
 		while (results.moveToNext())
 		{
@@ -240,20 +242,23 @@ public class Database extends SQLiteOpenHelper {
 		model.setPaymentCycle(cursor.getString(2));
 		model.setDistrict(cursor.getString(3));
 		model.setTehsil(cursor.getString(4));
-		model.setUc(cursor.getString(5));
-		model.setVillage(cursor.getString(6));
-		model.setAddress(cursor.getString(7));
-		model.setSchool(cursor.getString(8));
-		model.setBeneficiaryCNIC(cursor.getString(9));
-		model.setBeneficiaryName(cursor.getString(10));
-		model.setFatherName(cursor.getString(11));
-		model.setAmount(cursor.getInt(12));
-		model.setStatus(cursor.getInt(13));
-		model.setDateDownloaded(DateUtility.toDateTime(cursor.getString(14)));
-		model.setPaid(cursor.getInt(15) == 1);
-		model.setDatePaid(DateUtility.toDateTime(cursor.getString(16)));
-        model.setSynced(cursor.getInt(17) == 1);
-        model.setDateSynced(DateUtility.toDateTime(cursor.getString(18)));
+		model.setSchoolId(cursor.getString(5));
+		model.setSchoolName(cursor.getString(6));
+		model.setStudentId(cursor.getString(7));
+		model.setStudentName(cursor.getString(8));
+		model.setDateOfBirth(cursor.getString(9));
+		model.setStudentClass(cursor.getString(10));
+		model.setBeneficiaryCNIC(cursor.getString(11));
+		model.setBeneficiaryName(cursor.getString(12));
+		model.setAmount(cursor.getInt(13));
+		model.setStatus(cursor.getInt(14));
+		model.setDateDownloaded(DateUtility.toDateTime(cursor.getString(15)));
+		model.setPaid(cursor.getInt(16) == 1);
+		model.setDatePaid(DateUtility.toDateTime(cursor.getString(17)));
+        model.setLatPaid(cursor.getString(18));
+        model.setLngPaid(cursor.getString(19));
+        model.setSynced(cursor.getInt(20) == 1);
+        model.setDateSynced(DateUtility.toDateTime(cursor.getString(21)));
         return model;
 	}
 
@@ -261,22 +266,25 @@ public class Database extends SQLiteOpenHelper {
 	{
 		SQLiteDatabase wdb = GetSqliteHelper(context);
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_IS_SYNCED, 1);
-		cv.put(COLUMN_DATE_SYNCED, DateUtility.formatDateTime(new java.util.Date()));
-		if (wdb.update(TABLE_BENEFICIARY, cv, COLUMN_PAYMENT_ID + " = ?", new String[] {paymentId}) != 1)
+		cv.put(BeneficiaryEnum.IsSynced.Value, 1);
+		cv.put(BeneficiaryEnum.DateSynced.Value, DateUtility.formatDateTime(new java.util.Date()));
+		if (wdb.update(TABLE_BENEFICIARY, cv, BeneficiaryEnum.PaymentId.Value + " = ?", new String[] {paymentId}) != 1)
 			throw new DatabaseUpdateException();
 
 		wdb.close();
 	}
 
-	public static synchronized int savePayment(Context context, String paymentId, int status)
+	public static synchronized int savePayment(Context context, String paymentId, int status, String lat, String lng)
 	{
 		SQLiteDatabase wdb = GetSqliteHelper(context);
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_STATUS, status);
-		cv.put(COLUMN_IS_PAID, 1);
-		cv.put(COLUMN_DATE_PAID, DateUtility.formatDateTime(new java.util.Date()));
-		int result = wdb.update(TABLE_BENEFICIARY, cv, COLUMN_PAYMENT_ID + " = ?", new String[] {paymentId});
+		cv.put(BeneficiaryEnum.Status.Value, status);
+		cv.put(BeneficiaryEnum.IsPaid.Value, 1);
+		cv.put(BeneficiaryEnum.LatPaid.Value, lat);
+		cv.put(BeneficiaryEnum.LngPaid.Value, lng);
+
+		cv.put(BeneficiaryEnum.DatePaid.Value, DateUtility.formatDateTime(new java.util.Date()));
+		int result = wdb.update(TABLE_BENEFICIARY, cv, BeneficiaryEnum.PaymentId.Value + " = ?", new String[] {paymentId});
 
 		wdb.close();
 

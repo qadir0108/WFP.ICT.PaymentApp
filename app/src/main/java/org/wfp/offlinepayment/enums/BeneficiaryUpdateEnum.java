@@ -8,7 +8,9 @@ public enum BeneficiaryUpdateEnum{
 
     Data("Data"),
     PaymentId("PaymentId"),
-    DatePaid("DatePaid");
+    DatePaid("DatePaid"),
+    LatPaid("LatPaid"),
+    LngPaid("LngPaid");
     public String Value;
 
     private BeneficiaryUpdateEnum(String v){

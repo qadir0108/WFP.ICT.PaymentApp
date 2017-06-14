@@ -1,10 +1,7 @@
 package org.wfp.offlinepayment.activities;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,15 +23,15 @@ import org.wfp.offlinepayment.exceptions.NotConnectedException;
 import org.wfp.offlinepayment.exceptions.UrlConnectionException;
 import org.wfp.offlinepayment.model.BaseModel;
 import org.wfp.offlinepayment.model.BeneficiaryModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.wfp.offlinepayment.services.GPSTracker;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class ScanActivity extends AppCompatActivity {
 
     BeneficiaryModel model;
+    GPSTracker tracker;
+    boolean isLocationGot;
     private Button btnScan;
     private Button btnPay;
     @Override
@@ -42,12 +39,7 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_scan);
-
-        if(checkAndRequestPermissions()) {
-
-        } else {
-
-        }
+        tracker = new GPSTracker(ScanActivity.this);
 
         btnScan = (Button) findViewById(R.id.btnScan);
         btnScan.setOnClickListener(new View.OnClickListener() {
@@ -76,8 +68,9 @@ public class ScanActivity extends AppCompatActivity {
                             public void onClick(SweetAlertDialog sDialog) {
 
                                 try {
+
                                     ProviderUtility.BeneficiaryProvider = new BeneficiaryProvider(ScanActivity.this);
-                                    ProviderUtility.BeneficiaryProvider.savePayment(model.getPaymentId(), BaseModel.PaymentStatusEnum.Encashed.ordinal());
+                                    ProviderUtility.BeneficiaryProvider.savePayment(model.getPaymentId(), BaseModel.PaymentStatusEnum.Encashed.ordinal(), tracker.getLatitude(), tracker.getLongitude());
                                 } catch (UrlConnectionException e) {
                                     e.printStackTrace();
                                 } catch (JSONException e) {
@@ -88,7 +81,8 @@ public class ScanActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 } catch (NetworkStatePermissionException e) {
                                     e.printStackTrace();
-                                } catch (DatabaseUpdateException e) {
+                                }
+                                catch (DatabaseUpdateException e) {
                                     e.printStackTrace();
                                 }
 
@@ -115,20 +109,16 @@ public class ScanActivity extends AppCompatActivity {
         });
 
 
-    }
-
-    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    private  boolean checkAndRequestPermissions() {
-        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        List<String> listPermissionsNeeded = new ArrayList<>();
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        if (tracker.canGetLocation()) {
+            isLocationGot = true;
+//            new SweetAlertDialog(ScanActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+//                    .setTitleText("Done!")
+//                    .setContentText(tracker.getLatitude() + " " +tracker.getLongitude())
+//                    .show();
+        } else {
+            isLocationGot = false;
+            tracker.showSettingsAlert();
         }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -146,7 +136,7 @@ public class ScanActivity extends AppCompatActivity {
         if (scanResult != null) {
 
             try {
-                String paymentId = scanResult.getContents(); //"0526304465172411000";
+                String paymentId = scanResult.getContents();//"05000012571000";
 
                 if(paymentId != null) {
 
@@ -179,16 +169,16 @@ public class ScanActivity extends AppCompatActivity {
                                     .setContentText("Beneficiary FOUND!")
                                     .show();
 
-                            ((TextView) findViewById(R.id.lblSchool)).setText(model.getSchool());
+                            ((TextView) findViewById(R.id.lblSchoolName)).setText(model.getSchoolName());
+                            ((TextView) findViewById(R.id.lblSchoolId)).setText(model.getSchoolId());
                             ((TextView) findViewById(R.id.lblDistrict)).setText(model.getDistrict());
                             ((TextView) findViewById(R.id.lblTehsil)).setText(model.getTehsil());
-                            ((TextView) findViewById(R.id.lblUC)).setText(model.getUc());
-                            ((TextView) findViewById(R.id.lblVillage)).setText(model.getVillage());
-                            ((TextView) findViewById(R.id.lblAddress)).setText(model.getAddress());
-
+                            ((TextView) findViewById(R.id.lblStudentName)).setText(model.getStudentName());
+                            ((TextView) findViewById(R.id.lblStudentId)).setText(model.getStudentId());
+                            ((TextView) findViewById(R.id.lblStudentClass)).setText(model.getStudentClass());
+                            ((TextView) findViewById(R.id.lblStudentDoB)).setText(model.getDateOfBirth());
                             ((TextView) findViewById(R.id.lblBeneficiaryName)).setText(model.getBeneficiaryName());
                             ((TextView) findViewById(R.id.lblBeneficiaryCNIC)).setText(model.getBeneficiaryCNIC());
-                            ((TextView) findViewById(R.id.lblFatherName)).setText(model.getFatherName());
                             ((TextView) findViewById(R.id.lblPaymentCycle)).setText(model.getPaymentCycle());
                             ((TextView) findViewById(R.id.lblAmount)).setText(model.getAmount() + "");
                         }

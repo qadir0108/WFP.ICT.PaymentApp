@@ -11,6 +11,8 @@ public class BeneficiaryUpdateModel extends BaseModel implements Serializable {
 
 	private String PaymentId;
 	private String DatePaid;
+    private String LatPaid;
+    private String LngPaid;
 
     public String getPaymentId() {
         return PaymentId;
@@ -33,8 +35,27 @@ public class BeneficiaryUpdateModel extends BaseModel implements Serializable {
         try {
             obj.put(BeneficiaryUpdateEnum.PaymentId.Value, PaymentId);
             obj.put(BeneficiaryUpdateEnum.DatePaid.Value, DatePaid);
+            obj.put(BeneficiaryUpdateEnum.LatPaid.Value, LatPaid);
+            obj.put(BeneficiaryUpdateEnum.LngPaid.Value, LngPaid);
+
         } catch (JSONException e) {
         }
         return obj;
+    }
+
+    public String getLatPaid() {
+        return LatPaid;
+    }
+
+    public void setLatPaid(String latPaid) {
+        LatPaid = latPaid;
+    }
+
+    public String getLngPaid() {
+        return LngPaid;
+    }
+
+    public void setLngPaid(String lngPaid) {
+        LngPaid = lngPaid;
     }
 }

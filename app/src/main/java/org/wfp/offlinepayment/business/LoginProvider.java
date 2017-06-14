@@ -10,6 +10,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
+import org.wfp.offlinepayment.db.Database;
 import org.wfp.offlinepayment.exceptions.EmptyAuthTokenException;
 import org.wfp.offlinepayment.exceptions.EmptyStringException;
 import org.wfp.offlinepayment.exceptions.JSONNullableException;

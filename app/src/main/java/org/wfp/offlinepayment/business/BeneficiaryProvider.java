@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,8 +16,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.wfp.offlinepayment.enums.BeneficiaryUpdateEnum;
+import org.wfp.offlinepayment.db.Database;
+import org.wfp.offlinepayment.enums.BeneficiaryEnum;
 import org.wfp.offlinepayment.exceptions.DatabaseInsertException;
 import org.wfp.offlinepayment.exceptions.DatabaseUpdateException;
 import org.wfp.offlinepayment.exceptions.JSONNullableException;
@@ -33,7 +29,7 @@ import org.wfp.offlinepayment.model.BeneficiaryModel;
 import org.wfp.offlinepayment.model.BeneficiaryUpdateModel;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.location.Location;
 
 public class BeneficiaryProvider extends BaseProvider {
 
@@ -116,9 +112,9 @@ public class BeneficiaryProvider extends BaseProvider {
 		return Database.getByPaymentId(context, PaymentId);
 	}
 
-	public void savePayment(String paymentId, int status) throws DatabaseUpdateException
+	public void savePayment(String paymentId, int status, double lat, double lng) throws DatabaseUpdateException
 	{
-		if (Database.savePayment(context, paymentId, status) != 1)
+		if (Database.savePayment(context, paymentId, status, String.valueOf(lat), String.valueOf(lng)) != 1)
 			throw new DatabaseUpdateException();
 	}
 
@@ -141,20 +137,21 @@ public class BeneficiaryProvider extends BaseProvider {
 	{
 		BeneficiaryModel model = new BeneficiaryModel();
 
-		model.setId(setStringValueFromJSON(Database.COLUMN_ID, object));
-		model.setPaymentId(setStringValueFromJSON(Database.COLUMN_PAYMENT_ID, object));
-		model.setPaymentCycle(setStringValueFromJSON(Database.COLUMN_PAYMENT_CYCLE, object));
-		model.setDistrict(setStringValueFromJSON(Database.COLUMN_DISTRICT, object));
-		model.setTehsil(setStringValueFromJSON(Database.COLUMN_TEHSIL, object));
-		model.setUc(setStringValueFromJSON(Database.COLUMN_UC, object));
-		model.setVillage(setStringValueFromJSON(Database.COLUMN_VILLAGE, object));
-		model.setAddress(setStringValueFromJSON(Database.COLUMN_ADDRESS, object));
-		model.setSchool(setStringValueFromJSON(Database.COLUMN_SCHOOL, object));
-		model.setBeneficiaryCNIC(setStringValueFromJSON(Database.COLUMN_BENEFICIARY_CNIC, object));
-		model.setBeneficiaryName(setStringValueFromJSON(Database.COLUMN_BENEFICIARY_NAME, object));
-		model.setFatherName(setStringValueFromJSON(Database.COLUMN_FATHER_NAME, object));
-		model.setAmount(setIntValueFromJSON(Database.COLUMN_AMONUT, object));
-		model.setStatus(setIntValueFromJSON(Database.COLUMN_STATUS, object));
+		model.setId(setStringValueFromJSON(BeneficiaryEnum.Id.Value, object));
+		model.setPaymentId(setStringValueFromJSON(BeneficiaryEnum.PaymentId.Value, object));
+		model.setPaymentCycle(setStringValueFromJSON(BeneficiaryEnum.PaymentCycle.Value, object));
+		model.setDistrict(setStringValueFromJSON(BeneficiaryEnum.District.Value, object));
+		model.setTehsil(setStringValueFromJSON(BeneficiaryEnum.Tehsil.Value, object));
+		model.setSchoolId(setStringValueFromJSON(BeneficiaryEnum.SchoolId.Value, object));
+		model.setSchoolName(setStringValueFromJSON(BeneficiaryEnum.SchoolName.Value, object));
+		model.setStudentId(setStringValueFromJSON(BeneficiaryEnum.StudentId.Value, object));
+		model.setStudentName(setStringValueFromJSON(BeneficiaryEnum.StudentName.Value, object));
+		model.setDateOfBirth(setStringValueFromJSON(BeneficiaryEnum.DateOfBirth.Value, object));
+		model.setStudentClass(setStringValueFromJSON(BeneficiaryEnum.StudentClass.Value, object));
+		model.setBeneficiaryCNIC(setStringValueFromJSON(BeneficiaryEnum.BeneficiaryCNIC.Value, object));
+		model.setBeneficiaryName(setStringValueFromJSON(BeneficiaryEnum.BeneficiaryName.Value, object));
+		model.setAmount(setIntValueFromJSON(BeneficiaryEnum.Amount.Value, object));
+		model.setStatus(setIntValueFromJSON(BeneficiaryEnum.Status.Value, object));
 		model.setDateDownloaded(new java.util.Date());
 
 		return model;
@@ -169,16 +166,17 @@ public class BeneficiaryProvider extends BaseProvider {
 		List<BeneficiaryModel> data = ProviderUtility.BeneficiaryProvider.getPayments();
 		List<BeneficiaryUpdateModel> notSynced = new ArrayList<BeneficiaryUpdateModel>();
 		for (BeneficiaryModel model : data) {
-			if(model.isPaid() && !model.isSynced())
+			//if(model.isPaid() && !model.isSynced())
+            if(model.isPaid() )
             {
                 BeneficiaryUpdateModel update = new BeneficiaryUpdateModel();
                 update.setPaymentId(model.getPaymentId());
                 update.setDatePaid(DateUtility.formatDateTimeToSend(model.getDatePaid()));
-                //update.setDatePaid(DateUtility.formatDateTimeToSend(new Date()));
+                update.setLatPaid(model.getLatPaid());
+                update.setLngPaid(model.getLngPaid());
                 notSynced.add(update);
             }
 		}
-		if(notSynced.size() == 0) throw new IOException("All synced");
 
 		JSONArray jsArray = new JSONArray();
         for (BeneficiaryUpdateModel model : notSynced) {
